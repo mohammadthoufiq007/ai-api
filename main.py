@@ -38,33 +38,33 @@ tasks_db = [
     {"id": 3, "title": "Do laundry", "done": True}
 ]
 
-@app.get("/")
+@app.get("/", description="Get API information including name, version, and endpoints")
 def get_root():
     return {"name": "Task API", "version": "1.0", "endpoints": ["/tasks"]}
 
-@app.get("/health")
+@app.get("/health", description="Check API health status")
 def get_health():
     return {"status": "ok"}
 
-@app.get("/tasks")
+@app.get("/tasks", description="Get all tasks")
 def get_tasks():
     return tasks_db
 
-@app.get("/tasks/{task_id}")
+@app.get("/tasks/{task_id}", description="Get a single task by ID")
 def get_task(task_id: int):
     for task in tasks_db:
         if task["id"] == task_id:
             return task
     return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
 
-@app.post("/tasks", status_code=201)
+@app.post("/tasks", status_code=201, description="Create a new task")
 def create_task(task: TaskCreate):
     new_id = max([t["id"] for t in tasks_db], default=0) + 1
     new_task = {"id": new_id, "title": task.title, "done": False}
     tasks_db.append(new_task)
     return new_task
 
-@app.put("/tasks/{task_id}")
+@app.put("/tasks/{task_id}", description="Update an existing task")
 def update_task(task_id: int, task_update: TaskUpdate):
     for task in tasks_db:
         if task["id"] == task_id:
@@ -74,7 +74,7 @@ def update_task(task_id: int, task_update: TaskUpdate):
             return task
     return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
 
-@app.delete("/tasks/{task_id}", status_code=204)
+@app.delete("/tasks/{task_id}", status_code=204, description="Delete a task")
 def delete_task(task_id: int):
     for i, task in enumerate(tasks_db):
         if task["id"] == task_id:
