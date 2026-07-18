@@ -1,34 +1,61 @@
-# CRUD API
+# CRUD API (W2 · A1)
 
-A simple in-memory CRUD API for managing a to-do list, built with FastAPI.
+## Goal
+A small API that manages a to-do list: you can create tasks, read them, update them, and delete them — the four CRUD operations. The API is built with **Python 3.10+** and **FastAPI**, tested via a visual page called **Swagger UI**, and uses strictly in-memory storage. 
 
-## Installation and Run Instructions
+## Purpose
+This project represents the heartbeat of almost every backend in the world: the request → response loop. Two professional habits start here:
+1. Data lives only in memory (no database yet — losing data on restart is intentional).
+2. Everything is published and version-controlled through GitHub.
+
+## The Big Idea
+This API is a server — a program that waits for requests and sends back responses. It offers several **endpoints** (doors into the server defined by a path and an HTTP method). 
+
+The four CRUD operations map onto the HTTP methods as implemented in this API:
+| CRUD operation | HTTP method | Example endpoint | Meaning |
+|---|---|---|---|
+| Create | POST | `POST /tasks` | Add a new task |
+| Read | GET | `GET /tasks` · `GET /tasks/3` | List all tasks / get task 3 |
+| Update | PUT | `PUT /tasks/3` | Change task 3 |
+| Delete | DELETE | `DELETE /tasks/3` | Remove task 3 |
+
+---
+
+## 🚀 Installation & Run Instructions
 
 To install the dependencies and run the server locally:
 
 ```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Start the server on port 8000
 uvicorn main:app --reload
 ```
 
-## Endpoints
+## 🛠️ Endpoints & Features Built
 
-| CRUD op | Method | Path | Success |
+This project was built strictly in stages, fulfilling all requirements and optional extras.
+
+| Feature / Stage | Method | Path | Success |
 |---|---|---|---|
-| Create | POST | `/tasks` | 201 |
-| Read (all) | GET | `/tasks` | 200 |
-| Read (one) | GET | `/tasks/{id}` | 200 |
-| Update | PUT | `/tasks/{id}` | 200 |
-| Delete | DELETE | `/tasks/{id}` | 204 |
-| Root | GET | `/` | 200 |
-| Health | GET | `/health` | 200 |
-| Filter/Paginate | GET | `/tasks?done=true&search=milk&limit=2&offset=0` | 200 |
-| Statistics | GET | `/stats` | 200 |
-| Reset | POST | `/reset` | 200 |
+| **Root (Stage 1)** | GET | `/` | 200 |
+| **Health (Stage 1)** | GET | `/health` | 200 |
+| **Read All (Stage 2)** | GET | `/tasks` | 200 |
+| **Read One (Stage 2)** | GET | `/tasks/{id}` | 200 |
+| **Create (Stage 3)** | POST | `/tasks` | 201 |
+| **Update (Stage 4)** | PUT | `/tasks/{id}` | 200 |
+| **Delete (Stage 4)** | DELETE | `/tasks/{id}` | 204 |
+| **Filter/Paginate (Extra)** | GET | `/tasks?done=true&search=milk&limit=2&offset=0` | 200 |
+| **Statistics (Extra)** | GET | `/stats` | 200 |
+| **Reset (Extra)** | POST | `/reset` | 200 |
 
 *Note: Real APIs paginate their list endpoints (like `/tasks?limit=2&offset=2`) to limit the amount of data returned in a single request, which improves performance and reduces server/client payload overhead.*
 
-## Example `curl` Output
+### Validation Rules
+The server never trusts client input. If a `title` is missing or empty on a `POST` or `PUT` request, the server intentionally blocks it and returns a `400 Bad Request` with a JSON error explaining the issue. If an unknown ID is requested, it correctly returns a `404 Not Found` with a specific JSON error. 
+
+## 💻 Example `curl` Output
 
 ```bash
 $ curl -i http://localhost:8000/tasks
@@ -41,8 +68,8 @@ content-type: application/json
 [{"id":1,"title":"Buy milk","done":false},{"id":2,"title":"Walk the dog","done":false},{"id":3,"title":"Do laundry","done":true}]
 ```
 
-## Swagger UI
+## 📖 Swagger UI
 
-You can interact with the API using the built-in Swagger UI at `http://localhost:8000/docs`.
+You can interact with the API using the built-in Swagger UI (Stage 5) at `http://localhost:8000/docs`. Every endpoint features a custom description to make the interface self-explanatory.
 
 ![Swagger UI Screenshot](./docs/swagger.png)
