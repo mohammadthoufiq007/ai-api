@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, field_validator
 from typing import Optional
 
-app = FastAPI()
+app = FastAPI(title="CRUD API")
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -46,9 +46,40 @@ def get_root():
 def get_health():
     return {"status": "ok"}
 
-@app.get("/tasks", description="Get all tasks")
-def get_tasks():
-    return tasks_db
+@app.get("/tasks", description="Get all tasks with optional filtering and pagination")
+def get_tasks(
+    done: Optional[bool] = None,
+    search: Optional[str] = None,
+    limit: int = 100,
+    offset: int = 0
+):
+    result = tasks_db
+    if done is not None:
+        result = [t for t in result if t["done"] == done]
+    if search is not None:
+        result = [t for t in result if search.lower() in t["title"].lower()]
+    return result[offset : offset + limit]
+
+@app.get("/stats", description="Get task statistics")
+def get_stats():
+    total = len(tasks_db)
+    done_count = sum(1 for t in tasks_db if t["done"])
+    return {
+        "total": total,
+        "done": done_count,
+        "open": total - done_count
+    }
+
+@app.post("/reset", description="Reset tasks to initial state")
+def reset_tasks():
+    global tasks_db
+    tasks_db.clear()
+    tasks_db.extend([
+        {"id": 1, "title": "Buy milk", "done": False},
+        {"id": 2, "title": "Walk the dog", "done": False},
+        {"id": 3, "title": "Do laundry", "done": True}
+    ])
+    return {"message": "Tasks reset"}
 
 @app.get("/tasks/{task_id}", description="Get a single task by ID")
 def get_task(task_id: int):

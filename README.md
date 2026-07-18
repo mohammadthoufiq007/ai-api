@@ -1,4 +1,4 @@
-# To-Do CRUD API
+# CRUD API
 
 A simple in-memory CRUD API for managing a to-do list, built with FastAPI.
 
@@ -22,6 +22,11 @@ uvicorn main:app --reload
 | Delete | DELETE | `/tasks/{id}` | 204 |
 | Root | GET | `/` | 200 |
 | Health | GET | `/health` | 200 |
+| Filter/Paginate | GET | `/tasks?done=true&search=milk&limit=2&offset=0` | 200 |
+| Statistics | GET | `/stats` | 200 |
+| Reset | POST | `/reset` | 200 |
+
+*Note: Real APIs paginate their list endpoints (like `/tasks?limit=2&offset=2`) to limit the amount of data returned in a single request, which improves performance and reduces server/client payload overhead.*
 
 ## Example `curl` Output
 
