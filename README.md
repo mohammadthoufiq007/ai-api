@@ -1,5 +1,7 @@
 # CRUD API (W2 · A1)
 
+🌟 **Live API Documentation:** [https://crud-api-4881.onrender.com/docs](https://crud-api-4881.onrender.com/docs)
+
 ## Goal
 A small API that manages a to-do list: you can create tasks, read them, update them, and delete them — the four CRUD operations. The API is built with **Python 3.10+** and **FastAPI**, tested via a visual page called **Swagger UI**, and uses strictly in-memory storage. 
 
@@ -70,6 +72,10 @@ content-type: application/json
 
 ## 📖 Swagger UI
 
-You can interact with the API using the built-in Swagger UI (Stage 5) at `http://localhost:8000/docs`. Every endpoint features a custom description to make the interface self-explanatory.
+You can interact with the API using the built-in Swagger UI (Stage 5) at:
+- **Live Deployment:** [https://crud-api-4881.onrender.com/docs](https://crud-api-4881.onrender.com/docs)
+- **Local Environment:** `http://localhost:8000/docs`
+
+Every endpoint features a custom description to make the interface self-explanatory.
 
 ![Swagger UI Screenshot](./docs/swagger.png)
