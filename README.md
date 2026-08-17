@@ -21,9 +21,6 @@ Here is an example query you can run to view all completed tasks:
 SELECT * FROM tasks WHERE done = 1;
 ```
 
-### Database Screenshot
-*(TODO: Add screenshot of DB Browser for SQLite viewing the `tasks` table here)*
-![Database Screenshot placeholder](./docs/database.png)
 
 ## The Big Idea
 This API is a server — a program that waits for requests and sends back responses. It offers several **endpoints** (doors into the server defined by a path and an HTTP method). 
@@ -93,4 +90,3 @@ You can interact with the API using the built-in Swagger UI (Stage 5) at:
 
 Every endpoint features a custom description to make the interface self-explanatory.
 
-![Swagger UI Screenshot](./docs/swagger.png)
