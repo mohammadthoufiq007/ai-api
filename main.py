@@ -9,6 +9,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, field_validator, EmailStr
 from typing import Optional
 from contextlib import asynccontextmanager
+from src.llm.schema import TaskEnrichmentRequest, TaskEnrichmentResponse
+from src.llm.client import enrich_task
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 
@@ -379,4 +381,9 @@ def delete_task(task_id: int):
         return Response(status_code=204)
         
     return JSONResponse(status_code=404, content={"error": f"Task {task_id} not found"})
+
+# AI endpoints
+@app.post("/enrich", response_model=TaskEnrichmentResponse, description="Enrich a task description with AI categorization")
+def enrich(request: TaskEnrichmentRequest):
+    return enrich_task(request.description)
 
