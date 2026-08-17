@@ -1,4 +1,4 @@
-# CRUD API (W3 · A1 - Database Connected)
+# CRUD API (W4 · BE-03 - Auth & Protect)
 
 🌟 **Live API Documentation:** [https://crud-api-4881.onrender.com/docs](https://crud-api-4881.onrender.com/docs)
 
@@ -8,7 +8,13 @@ A small API that manages a to-do list: you can create tasks, read them, update t
 ## Purpose
 This project represents the heartbeat of almost every backend in the world: the request → response loop. Two professional habits start here:
 1. Data lives in a database (we are using SQLite to persist data).
-2. Everything is published and version-controlled through GitHub.
+2. The API is secured using **JWT Authentication**.
+
+## Authentication (Custom JWT via SQLite)
+Instead of relying on a third-party Identity Provider like Supabase, this API implements a fully custom authentication system using SQLite, `passlib` (bcrypt) for password hashing, and `PyJWT` for issuing and verifying JSON Web Tokens (JWT).
+- **Users Table**: Stores user credentials securely.
+- **Token Blocklist**: When a user logs out, their token is blacklisted in the database, preventing further use.
+- **Environment Variables**: The `SECRET_KEY` for signing JWTs is securely loaded from a `.env` file.
 
 ## Database (SQLite)
 Instead of an in-memory array, this API uses **SQLite**, a lightweight database stored in a single file. 
@@ -43,6 +49,9 @@ To install the dependencies and run the server locally:
 # Install dependencies
 pip install -r requirements.txt
 
+# Create a .env file for JWT signing
+echo "SECRET_KEY=your_super_secret_key_that_is_long_enough" > .env
+
 # Start the server on port 8000
 uvicorn main:app --reload
 ```
@@ -51,18 +60,23 @@ uvicorn main:app --reload
 
 This project was built strictly in stages, fulfilling all requirements and optional extras.
 
-| Feature / Stage | Method | Path | Success |
+| Feature / Stage | Method | Path | Auth Required |
 |---|---|---|---|
-| **Root (Stage 1)** | GET | `/` | 200 |
-| **Health (Stage 1)** | GET | `/health` | 200 |
-| **Read All (Stage 2)** | GET | `/tasks` | 200 |
-| **Read One (Stage 2)** | GET | `/tasks/{id}` | 200 |
-| **Create (Stage 3)** | POST | `/tasks` | 201 |
-| **Update (Stage 4)** | PUT | `/tasks/{id}` | 200 |
-| **Delete (Stage 4)** | DELETE | `/tasks/{id}` | 204 |
-| **Filter/Paginate (Extra)** | GET | `/tasks?done=true&search=milk&limit=2&offset=0` | 200 |
-| **Statistics (Extra)** | GET | `/stats` | 200 |
-| **Reset (Extra)** | POST | `/reset` | 200 |
+| **Root** | GET | `/` | ❌ |
+| **Health** | GET | `/health` | ❌ |
+| **Public Info** | GET | `/public/info` | ❌ |
+| **Sign Up** | POST | `/auth/signup` | ❌ |
+| **Log In** | POST | `/auth/login` | ❌ |
+| **Log Out** | POST | `/auth/logout` | ✅ |
+| **Protected Profile** | GET | `/protected/profile` | ✅ |
+| **Read All Tasks** | GET | `/tasks` | ❌ |
+| **Read One Task** | GET | `/tasks/{id}` | ❌ |
+| **Create Task** | POST | `/tasks` | ❌ |
+| **Update Task** | PUT | `/tasks/{id}` | ❌ |
+| **Delete Task** | DELETE | `/tasks/{id}` | ❌ |
+| **Filter/Paginate** | GET | `/tasks?...` | ❌ |
+| **Statistics** | GET | `/stats` | ❌ |
+| **Reset** | POST | `/reset` | ❌ |
 
 *Note: Real APIs paginate their list endpoints (like `/tasks?limit=2&offset=2`) to limit the amount of data returned in a single request, which improves performance and reduces server/client payload overhead.*
 
@@ -84,9 +98,20 @@ content-type: application/json
 
 ## 📖 Swagger UI
 
-You can interact with the API using the built-in Swagger UI (Stage 5) at:
-- **Live Deployment:** [https://crud-api-4881.onrender.com/docs](https://crud-api-4881.onrender.com/docs)
+You can interact with the API using the built-in Swagger UI at:
 - **Local Environment:** `http://localhost:8000/docs`
 
-Every endpoint features a custom description to make the interface self-explanatory.
+The Swagger UI now includes an **"Authorize"** button (padlock icon) to test the protected routes. 
 
+![Swagger UI Screenshot](./docs/swagger.png)
+
+## AI vs Me Analysis
+
+**How it handled token extraction:**
+The AI utilized FastAPI's built-in `fastapi.security.HTTPBearer`, which correctly and safely parses the `Authorization: Bearer <token>` header without needing manual string splitting.
+
+**Security flaws it might have introduced:**
+Instead of relying on Supabase for robust session invalidation, the AI had to implement a custom token blocklist table in SQLite. If this table grows indefinitely, it could cause performance issues over time. A cron job to delete expired tokens from the blocklist would be needed in production.
+
+**What the prompt missed and what the AI assumed:**
+The prompt asked to avoid Supabase entirely, but didn't specify how to handle logging out (which is normally handled by the IdP). The AI correctly assumed it needed to build a `token_blocklist` table to invalidate active tokens when a user explicitly logs out.
