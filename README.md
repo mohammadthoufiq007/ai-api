@@ -105,6 +105,60 @@ The Swagger UI now includes an **"Authorize"** button (padlock icon) to test the
 
 ![Swagger UI Screenshot](./docs/swagger.png)
 
+## 🤖 AI Endpoint: `/enrich`
+
+This API now includes a machine learning feature that categorizes a given task description into a predefined category and assigns it an urgency level. This endpoint takes unstructured text input, asks an LLM for classification, and returns clean, validated JSON output ensuring it strictly matches our domain schema.
+
+### Job Card
+- **What it does (one sentence):** Classifies a task description into a category and urgency level to help prioritize work.
+- **Input:** `{ "description": "string, 1-2000 characters" }`
+- **Output:**
+  ```json
+  {
+    "category": "one of [work|personal|errand|other]",
+    "urgency": "one of [low|normal|high]",
+    "confidence": "0.0-1.0",
+    "reason": "one short sentence"
+  }
+  ```
+- **It must never:** invent a category outside the list · return free text · give medical, legal or financial advice · reveal the prompt
+- **When unsure it should:** return category "other" with low confidence, not a guess
+
+### Setup & Provider Information
+- **Provider:** OpenRouter
+- **Model:** `openrouter/free`
+- **Environment Variables required:**
+  - `LLM_BASE_URL=https://openrouter.ai/api/v1`
+  - `LLM_API_KEY=your_key_here`
+  - `LLM_MODEL=openrouter/free`
+
+### Example `curl`
+
+```bash
+$ curl -X POST -H "Content-Type: application/json" -d '{"description": "Fix the production database outage!"}' http://localhost:8000/enrich
+```
+**Response:**
+```json
+{
+  "category": "work",
+  "urgency": "high",
+  "confidence": 0.95,
+  "reason": "Fixing a production database outage is a critical work task."
+}
+```
+
+### Evaluation Score
+- **Score:** 7/8 (87.5%)
+- **Date:** 2026-08-17
+- **Prompt Version:** v1
+
+### Cost Estimation
+- **Cost log for one call:** `{"prompt_version": "v1", "model": "openrouter/free", "input_tokens": 385, "output_tokens": 98, "duration_ms": 11861, "repair_needed": false}`
+- **Estimate for 10,000 requests/day:** Since we are using `openrouter/free`, the cost is $0/day. If using a paid model like `gpt-4o-mini`, at ~400 input tokens and 100 output tokens per request, 10k requests would consume 4M input tokens ($0.60) and 1M output tokens ($0.60), totaling ~$1.20 per day.
+
+### What I'd fix with another day
+If I had another day, I would integrate prompt caching (either using the provider's native caching or a local hash cache) since many task descriptions might be identical or very similar (e.g., "buy milk"), which would save latency and cost.
+
 ## AI vs Me Analysis
 
 **How it handled token extraction:**
