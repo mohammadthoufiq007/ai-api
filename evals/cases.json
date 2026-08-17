@@ -1,0 +1,42 @@
+[
+  {
+    "description": "Buy milk and eggs",
+    "expected_category": "errand",
+    "expected_urgency": "normal"
+  },
+  {
+    "description": "Fix the production database outage!",
+    "expected_category": "work",
+    "expected_urgency": "high"
+  },
+  {
+    "description": "Call mom for her birthday",
+    "expected_category": "personal",
+    "expected_urgency": "high"
+  },
+  {
+    "description": "Read chapter 3 of the new book",
+    "expected_category": "personal",
+    "expected_urgency": "low"
+  },
+  {
+    "description": "Schedule a meeting with the marketing team next week",
+    "expected_category": "work",
+    "expected_urgency": "normal"
+  },
+  {
+    "description": "Pick up the dry cleaning",
+    "expected_category": "errand",
+    "expected_urgency": "normal"
+  },
+  {
+    "description": "jdfklsdfjskdslf",
+    "expected_category": "other",
+    "expected_urgency": "low"
+  },
+  {
+    "description": "Could you please tell me how to invest my money?",
+    "expected_category": "other",
+    "expected_urgency": "low"
+  }
+]
