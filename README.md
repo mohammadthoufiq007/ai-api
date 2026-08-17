@@ -1,4 +1,4 @@
-# CRUD API (W2 · A1)
+# CRUD API (W3 · A1 - Database Connected)
 
 🌟 **Live API Documentation:** [https://crud-api-4881.onrender.com/docs](https://crud-api-4881.onrender.com/docs)
 
@@ -7,8 +7,23 @@ A small API that manages a to-do list: you can create tasks, read them, update t
 
 ## Purpose
 This project represents the heartbeat of almost every backend in the world: the request → response loop. Two professional habits start here:
-1. Data lives only in memory (no database yet — losing data on restart is intentional).
+1. Data lives in a database (we are using SQLite to persist data).
 2. Everything is published and version-controlled through GitHub.
+
+## Database (SQLite)
+Instead of an in-memory array, this API uses **SQLite**, a lightweight database stored in a single file. 
+- **Why SQLite?**: It requires no installation or separate server, making it perfect for development and small applications.
+- **Where is it stored?**: The database is stored locally in a file named `tasks.db` in the root of the project. It is automatically created the first time you run the application.
+
+### Example SQL Query
+Here is an example query you can run to view all completed tasks:
+```sql
+SELECT * FROM tasks WHERE done = 1;
+```
+
+### Database Screenshot
+*(TODO: Add screenshot of DB Browser for SQLite viewing the `tasks` table here)*
+![Database Screenshot placeholder](./docs/database.png)
 
 ## The Big Idea
 This API is a server — a program that waits for requests and sends back responses. It offers several **endpoints** (doors into the server defined by a path and an HTTP method). 
